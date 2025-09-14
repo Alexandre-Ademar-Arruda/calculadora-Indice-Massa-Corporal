@@ -422,7 +422,6 @@
                 return ul;
             }
             const div__lista = exibir__lista(); //div lista de clientes
-             setInterval(exibir__lista, 2000); // atualiza a lista a cada 2 segundos
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             div__modal.appendChild(anuncio);
             div__modal.appendChild(div__peso);//coloca a div peso no modal
@@ -431,10 +430,12 @@
             div__modal.appendChild(p__resultado);//coloca o resultado no modal
             div__modal.appendChild(fim);
             div__modal.appendChild(div__lista);
-            //div__modal.appendChild(ver__salvos);
-
             document.body.appendChild(div__modal);//coloca o modal no body
             document.body.appendChild(div_overlay);//coloca a div overlay no body
+
+            exibir__lista();
+
+            setInterval(exibir__lista, 2000); // atualiza a lista a cada 2 segundos
         }
        
 
