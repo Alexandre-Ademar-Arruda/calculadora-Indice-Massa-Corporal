@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin:0;
+            padding: 0;
+            box-sizing:border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            color: white;
+        }
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .titulo {
+            background-color: cadetblue;
+            padding: 10px;
+            border-radius: 10px;
+            transition: background-color 0.8s, color 0.7s;
+            cursor: pointer;
+        }
+        .titulo:hover {
+            background-color: rgb(84, 112, 113);
+        }
+        .modal {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(134, 78, 78, 0.5);
+            width: 300px;
+            gap: 10px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            display: flex;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10;
+        }
+       
+        .btn {
+            width: 100%;
+            max-width: 250px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            font-size: 10px;
+            border-radius: 4px;
+            background-color: #4CAF50;
+        }
+        .resultado {
+            width: 100%;
+            max-width: 250px;
+            padding: 10px;
+            margin: 8px 0 16px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            color: black ;
+            font-size: 10px;
+        }
+        
+        
+
+        .div-magica {
+            position: relative;
+            width: 100%;
+            max-width: 250px;
+            margin-bottom: 10px;
+        }
+
+        .input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 10px;
+            outline: none;
+        }
+
+        .label {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            color: #777;
+            font-size: 10px;
+            background: white;          /* evita texto sobreposto */
+            padding: 0 5px;
+            transition: 0.3s ease;
+            pointer-events: none;
+        }
+
+/* Quando o input está em foco ou preenchido */
+        .input:hover + .label,
+        .input:not(:placeholder-shown) + .label {
+            top: -8px;
+            left: 8px;
+            font-size: 10px;
+            color: #007bff;
+        }
+
+        .div-anuncio {
+            background-color: white;
+           /*box-shadow: coral 0px 0px 10px;*/
+            width: 100%;
+            max-width:250px;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            
+            padding:8px;
+            border-radius:4px;
+            
+        }
+        .anuncio {
+            background-color: white;
+            color: green;
+            padding:10px;
+            border-radius:4px;
+        }
+        
+        .div-fim {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            gap: 10px; 
+        }
+        .div-fim input[type="button"] {
+            padding: 8px 16px;
+            font-size: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            height: 40px;             /* altura fixa */
+            display: flex;
+            justify-content: center;  /* centraliza horizontalmente */
+            align-items: center;      /* centraliza verticalmente */
+        }
+        /* Botão Reiniciar */
+        .div-fim input[value="Reiniciar"] {
+            background-color: #4CAF50;  /* Verde agradável */
+            color: white;
+        }
+
+        /* Botão Fechar */
+        .div-fim input[value="❌"] {
+            background-color: #4CAF50;  /* Verde agradável */
+            color: white;
+        }
+        /* Botão Salvar */
+        .div-fim input[value="Salvar"] {
+            background-color: #4CAF50;  /* Verde agradável */
+            color: white;
+        }
+
+        /* Efeito hover nos botões */
+        .div-fim input[type="button"]:hover {
+            opacity: 0.8;               /* Leve escurecimento ao passar o mouse */
+        }
+        .dados-salvos {
+            width: 100%;
+            max-width: 250px;
+            background-color: green;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+             margin-top: auto; /* empurra para o fim do modal */
+
+            /*/////////////////////////////////////////////*/
+
+            display: flex;              /* organiza os itens em coluna */
+            flex-direction: column;     /* cada item vai ficar um embaixo do outro */
+            gap: 8px;                   /* espaço entre os registros */
+            margin-top: 15px;           /* distância do conteúdo acima */
+            padding: 10px;              /* respiro interno */
+            border-top: 1px solid #ccc; /* separador visual */
+            max-height: 200px;          /* limita a altura máxima da área */
+            overflow-y: auto;           /* cria scroll vertical se passar do limite */
+            background: #f9f9f9;        /* fundo levemente cinza */
+            border-radius: 8px;        
+
+        }
+        .dados-salvos input {
+            width: 100%;                /* ocupa toda a largura */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 10px;
+            background: #fff;
+            pointer-events: none;  
+        }
+        .lista-registros {
+            width:100%;max-width:250px;background-color:#f0f0f0;border-radius:8px;padding:10px;max-height:100px;overflow-y:auto;box-shadow:0 2px 6px rgba(0,0,0,0.2);
+        }
+        .lista-registros li {
+            background-color:#fff;border:1px solid #ddd; border-radius:6px;padding:6px 8px;font-size:10px;display: flex; justify-content:space-between;align-items:center;color: black;
+        }
+        .lista-registros li:last-child {
+            margin-bottom:0;
+        }
+
+    </style>
+    <title>Calculadora IMC</title>
+</head>
+<body>
+    <div class="main"></div>
+    <script>
+        
+        let p__resultado;
+        let input__altura;
+        let input__peso;
+
+        // Função para criar elementos com atributos e estilos  
+        function criarElemento(tipo, classe, conteudo, atributos = {}, estilos = {}) {
+            const el = document.createElement(tipo);
+            if (classe) el.className = classe;
+            if (conteudo) { if (tipo === 'input' || tipo === 'textarea') {el.value = conteudo;} else {el.textContent = conteudo;}}
+            for (let chave in atributos) { el.setAttribute(chave, atributos[chave]);}
+            for (let chave in estilos) { el.style[chave] = estilos[chave];}
+            return el;
+        }
+        
+        const main = document.querySelector('.main');
+        
+        // Criar o título inicial
+        const titulo = criarElemento('h1', 'titulo', 'Calcule Seu IMC');
+
+        main.appendChild(titulo);
+
+        //adicionando um ouvinte de evento 'click' ao titulo
+
+        const calcular_imc = (peso,altura) =>{
+            if(!peso||!altura){alert('preencha os campos!'); return;}
+            return peso / (altura * altura);
+        }
+
+        const ranking = (imc) =>{
+            let classificacao = '';
+            switch(true){
+                case(imc<18.5):
+                    classificacao='Abaixo do peso';
+                    break;
+                case(imc<25):
+                    classificacao='Peso normal';
+                    break;
+                case(imc<30):
+                    classificacao='Sobrepeso';
+                    break;
+                case(imc<35):
+                    classificacao='Obesidade Grau I';
+                    break;
+                case(imc<40):
+                    classificacao='Obesidade Grau II';
+                    break;
+                default:
+                    classificacao='Obesidade Grau III';
+                    break;
+            }
+            return classificacao;
+        }
+
+        const open = ()=>{
+            document.querySelector('.modal')?.remove();
+            document.querySelector('.overlay')?.remove();
+            document.body.appendChild(main);
+            main.innerHTML = ''; // limpa
+            main.appendChild(titulo); // recria só o título
+        }
+        const close = () =>{
+            document.querySelector('.modal')?.remove();
+            document.querySelector('.overlay')?.remove();
+            //window.location.href = "https://jatochegando.com.br";
+        }
+
+        const listar_dados =()=>{
+            const dados = JSON.parse(localStorage.getItem(''))
+        }
+
+        const modal = () => {
+            main.remove(); //remover a div main
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            const div__modal = criarElemento('div', 'modal');//cria a div modal
+            const div_overlay = criarElemento('div','overlay'); //cria a div overlay
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            const criar__anuncio = () => {
+                const anuncio = criarElemento('div','div-anuncio');
+                const p_anuncio_a = criarElemento('p','anuncio a','TRNSPRTDR');
+                const p_anuncio_b = criarElemento('p','anuncio b','JT - CHGNDO');
+                anuncio.append(p_anuncio_a,p_anuncio_b);
+                return anuncio;
+             }
+            const anuncio = criar__anuncio();
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            const criar__peso = () =>{
+                const div__peso = criarElemento('div', 'div-magica');
+                input__peso = criarElemento('input', 'input peso', null, { type: 'number', id: 'peso', placeholder: '', step: '0.1'});
+                const label__peso = criarElemento('label', 'label peso', 'Digite seu peso (kg):', { for: 'peso' });
+                div__peso.append(input__peso,label__peso);
+                return div__peso;
+            }
+            const div__peso = criar__peso();
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            const criar__altura = () => {
+                const div__altura = criarElemento('div', 'div-magica');
+                input__altura = criarElemento('input', 'input altura', null, { type: 'number', id: 'altura', placeholder: '', step: '0.01 '});
+                const label__altura = criarElemento('label', 'label altura', 'Digite sua altura:', { for: 'altura' });
+                div__altura.append(input__altura,label__altura)
+                return div__altura;
+            }
+            const div__altura = criar__altura();
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            const btn__calcular = criarElemento('button', 'btn calcular-imc', 'Calcular IMC');
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            const save__date = () =>{
+                const peso = parseFloat(  document.querySelector('.peso')?.value);
+                const altura = parseFloat(  document.querySelector('.altura')?.value);
+                const resultado = document.querySelector('.resultado')?.value;
+
+                //validaçao dos campos - peso e altura
+                if(!peso||!altura){alert('Preencha peso e altura antes de salvar.');return };
+            
+                let dados__salvos = JSON.parse(localStorage.getItem('imc__dados')) ||[];
+
+                const imc = (peso / (altura*altura)).toFixed(2);
+
+                const existe = dados__salvos.some(d=>
+                    Number(d.peso)===peso&&
+                    Number(d.altura)===altura&&
+                    d.imc === imc
+                );
+                
+                if(existe){alert('Este registro ja foi salvo.'); return; }
+
+                dados__salvos.push({peso, altura, imc, resultado});
+
+                localStorage.setItem('imc__dados',JSON.stringify(dados__salvos));
+
+                alert('Dados salvos no seu navegador.');
+
+            }
+            
+            const div__fim = ()=>{
+                const fim = criarElemento('div', 'div-fim');
+                fim.style.display = "none"; // 🔹 começa invisível
+                const reativar = criarElemento('input','input reiniciar','',{type:'button',value:'Reiniciar'});
+                const fechar = criarElemento('input','input fechar','',{type:'button', value:'❌'});
+                const salvar = criarElemento('input','input salvar','',{type:'button',value:'Salvar'});
+                fim.append(reativar,fechar,salvar);
+                reativar.addEventListener('click',open);
+                fechar.addEventListener('click',close);
+                salvar.addEventListener('click',save__date);
+                return fim;
+            }
+            const fim = div__fim();
+            
+            fim.style.display='none';
+
+             
+            const calcule = (fim) => { // funçao calcule
+                const peso = parseFloat(input__peso.value);
+                const altura = parseFloat(input__altura.value);
+                if (!peso || !altura || altura <= 0 || peso <= 0) {
+                    alert('Por favor, insira valores válidos para peso e altura.');
+                    return;
+                }
+                const imc = calcular_imc(peso,altura);
+                const classificacao = ranking(imc);    
+                p__resultado.value = `Seu IMC: ${imc.toFixed(2)}   - ${classificacao}`;
+                
+                fim.style.display='flex';
+            };
+            
+            btn__calcular.addEventListener('click', () =>{
+                calcule(fim);
+            });
+            
+            p__resultado = criarElemento('input', 'resultado');
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            const exibir__lista =()=>{
+                const dados__salvos = JSON.parse(localStorage.getItem('imc__dados'))||[];
+                const ul = criarElemento('ul','lista-registros');
+                if(dados__salvos.length===0) {const li = criarElemento('li'); li.textContent='Zero Registro';ul.appendChild(li)}
+                dados__salvos.slice().reverse().forEach(d => {
+                    const li = criarElemento('li');
+                    li.textContent=`⚖️Peso:${d.peso} kg, 📏Altura:${d.altura} m, 🟢IMC:${d.imc}`;
+                    ul.appendChild(li);
+                });
+
+                return ul;
+            }
+
+            const div__lista = exibir__lista(); //div lista de clientes
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            div__modal.appendChild(anuncio);
+            div__modal.appendChild(div__peso);//coloca a div peso no modal
+            div__modal.appendChild(div__altura);//coloca a div altura no modal
+            div__modal.appendChild(btn__calcular);//coloca o botao calcular no modal
+            div__modal.appendChild(p__resultado);//coloca o resultado no modal
+            div__modal.appendChild(fim);
+            div__modal.appendChild(div__lista);
+            //div__modal.appendChild(ver__salvos);
+
+            document.body.appendChild(div__modal);//coloca o modal no body
+            document.body.appendChild(div_overlay);//coloca a div overlay no body
+        }
+
+        titulo.addEventListener('click', modal);
+
+    </script>
+</body>
+</html>
