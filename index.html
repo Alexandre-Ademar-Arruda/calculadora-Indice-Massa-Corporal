@@ -367,6 +367,7 @@
                 localStorage.setItem('imc__dados',JSON.stringify(dados__salvos));
 
                 alert('Dados salvos no seu navegador.');
+                exibir__lista();
 
             }
             
@@ -417,11 +418,11 @@
                     li.textContent=`⚖️Peso:${d.peso} kg, 📏Altura:${d.altura} m, 🟢IMC:${d.imc}`;
                     ul.appendChild(li);
                 });
-
+                
                 return ul;
             }
-
             const div__lista = exibir__lista(); //div lista de clientes
+             setInterval(exibir__lista, 2000); // atualiza a lista a cada 2 segundos
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             div__modal.appendChild(anuncio);
             div__modal.appendChild(div__peso);//coloca a div peso no modal
@@ -435,6 +436,7 @@
             document.body.appendChild(div__modal);//coloca o modal no body
             document.body.appendChild(div_overlay);//coloca a div overlay no body
         }
+       
 
         titulo.addEventListener('click', modal);
 
